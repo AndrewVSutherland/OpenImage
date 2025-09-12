@@ -248,7 +248,8 @@ intrinsic gl2Lift(G::GrpMat[RngIntRes], m::RngIntElt) -> GrpMat[RngIntRes]
     return G_lift;
 end intrinsic;
 
-function FindCommutatorSubgroup(G)
+intrinsic FindCommutatorSubgroup(G::GrpMat) -> RngIntElt
+{ Given G in GL(2,Z/NZ) returns the level, generators, and index of the commutator subgroup of the corresponding subgroup of GL(2,Z_N) (product of GL(2,Z_l) for l|N). }
     /* 
         Input:
             G: a subgroup of GL(2,Z/NZ) for some N>1
@@ -294,7 +295,7 @@ function FindCommutatorSubgroup(G)
             
             if  i_M ne i_Mp then
                 M:=M*p;
-            end if;        
+            end if;
         until i_M eq i_Mp;
     
         M:=sl2Level(S); 
@@ -314,7 +315,7 @@ function FindCommutatorSubgroup(G)
         phi:=hom<G->GL(2,Integers(m))| [ChangeRing(G.i,Integers(m)): i in [1..Ngens(G)]]>;
         B:=ChangeRing(Kernel(phi),Integers(q));
         //  B x {I} is a subgroup of GL(2,Z/q) x GL(2,Z/m) = GL(2,Z/N)
-        Mp,_,_:=FindCommutatorSubgroup(B);        
+        Mp,_,_:=FindCommutatorSubgroup(B);
         M:=M*Mp;
     end for;
     // The level of [G,G] divides M.
@@ -328,10 +329,11 @@ function FindCommutatorSubgroup(G)
     index:=Index(SL(2,Integers(M)),S);
 
     return M, gens, index; 
-end function;
+end intrinsic;
 
 
-function IndexOfCommutator(G)
+intrinsic IndexOfCommutator(G::GrpMat) -> RngIntElt
+{ Returns the index in SL(2,Zhat) of the commutator subgroup of the inverse image in GL(2,Zhat) of G in GL(2,Z/NZ). }
     /*  The group G is a subgroup of GL(2,Z/NZ) with N>1 that we can idenitify with an open subgroup of GL(2,Zhat). 
         This function computes the index [SL(2,Zhat) : [G,G]], where [G,G] is the commutator subgroup of G in GL(2,Zhat).
     */
@@ -339,7 +341,7 @@ function IndexOfCommutator(G)
     N:=#BaseRing(G);
     if IsOdd(N) then index:=2*index; end if;
     return index;
-end function;
+end intrinsic;
 
 function ContainsScalars(G)
     // For a subgroup of GL(2,Z/N) with N>1, return true if G contains all the scalar matrices and false otherwise.
